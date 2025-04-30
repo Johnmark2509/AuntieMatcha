@@ -244,12 +244,15 @@ function updateAddonLabel(drinkId, i) {
   }
 }
 document.getElementById("order-form").addEventListener("submit", function (e) {
-  const selects = document.querySelectorAll("select");
-  for (let s of selects) {
-    if (s.required && !s.value) {
-      alert("Please complete all required drink options (size and sweetness).");
-      s.focus();
-      e.preventDefault(); // block form submission
+  const allSelects = document.querySelectorAll("select");
+  for (let select of allSelects) {
+    if (
+      select.required &&
+      (select.value === "" || select.value === null || select.value === undefined)
+    ) {
+      alert("Oops! Please select size and sweetness for all drinks you ordered.");
+      select.focus();
+      e.preventDefault(); // cancel the form submit
       return;
     }
   }
