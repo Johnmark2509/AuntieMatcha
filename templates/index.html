@@ -13,6 +13,7 @@
   <img src="/static/new_drink_menu.png" alt="New Auntie Matcha Menu" class="menu-img-small">
   <img src="/static/pastry_menu.png" alt="Kiecoo Whiskery Menu" class="menu-img-small">
 
+  <form id="order-form" method="post" action="/order">
   <form method="post" action="/order">
     <h2>🧍 Customer Details</h2>
     <div class="item"><label for="customer_name">Full Name:</label><input type="text" id="customer_name" name="customer_name" required></div>
@@ -242,7 +243,17 @@ function updateAddonLabel(drinkId, i) {
     label.textContent = "✔ Selected: " + selected.join(", ");
   }
 }
-
+document.getElementById("order-form").addEventListener("submit", function (e) {
+  const selects = document.querySelectorAll("select");
+  for (let s of selects) {
+    if (s.required && !s.value) {
+      alert("Please complete all required drink options (size and sweetness).");
+      s.focus();
+      e.preventDefault(); // block form submission
+      return;
+    }
+  }
+});
 </script>
 </body>
 </html>

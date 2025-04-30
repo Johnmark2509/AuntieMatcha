@@ -146,19 +146,6 @@ input[type="number"] {
   flex-shrink: 0;
 }
 
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: inner-spin-button;
-  appearance: auto;
-  margin: 0;
-}
-
-/* Android/Chrome appearance reset */
-input[type="number"] {
-  -moz-appearance: textfield;
-  appearance: textfield;
-}
-
 input[type="date"],
 input[type="time"] {
   border-radius: 10px !important;
