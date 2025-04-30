@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Orders</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container">
+  <h1>📋 All Orders (Admin Only)</h1>
+
+  {% set label_map = {
+    "matcha_classic": "Classic Matcha Latte",
+    "matcha_strawberry": "Strawberry Matcha Latte",
+    "hojicha_latte": "Hojicha Latte",
+    "strawberry_hojicha": "Strawberry Hojicha Latte",
+    "matcha_espresso": "Matcha Espresso Latte",
+    "iced_americano": "Iced Americano",
+    "iced_cafe_latte": "Iced Cafe Latte",
+    "iced_spanish_latte": "Iced Spanish Latte",
+    "iced_tablea": "Iced Tablea",
+    "tablea_berry": "Tablea Berry",
+    "strawberry_milk": "Strawberry Milk",
+    "choco_cookie": "Choco Chip Cookies",
+    "strawberry_cookie": "Strawberry Cheesecake Cookies",
+    "no_bake_cheesecake": "No-Bake Cheesecake"
+  } %}
+
+  {% set addon_map = {
+    "strong_matcha": "Strong Matcha",
+    "extra_espresso": "Extra Espresso",
+    "vanilla_foam": "Vanilla Cream Foam",
+    "both": "Strong Matcha + Extra Espresso",
+    "matcha_espresso": "Strong Matcha + Espresso",
+    "matcha_foam": "Strong Matcha + Vanilla Foam",
+    "espresso_foam": "Espresso + Vanilla Foam",
+    "all": "All Add-ons"
+  } %}
+
+  {% set pending = orders | selectattr("status", "equalto", "Pending") | sort(attribute="timestamp") %}
+  {% set paid = orders | selectattr("status", "equalto", "Paid") | sort(attribute="pickup_datetime") %}
+  {% set done = orders | selectattr("status", "equalto", "Done") %}
+
+  {% for label, group in [("Pending Orders", pending), ("Paid Orders", paid), ("Done Orders", done)] %}
+    <h2>{{ label }}</h2>
+
+    {% for order in group %}
+      <div class="order-card">
+        <p><strong>🕒 {{ order.timestamp }}</strong></p>
+        <p><strong>👤 {{ order.customer.name }}</strong></p>
+        <p>📱 {{ order.customer.contact }}</p>
+        <p>🏠 {{ order.customer.address }}</p>
+
+        {% set pickup_display = order.pickup_date ~ ' ' ~ order.pickup_time %}
+        <p>📦 Pickup: {{ pickup_display | datetimeformat("%b %d, %I:%M %p") }}</p>
+
+        {% if order.special_requests %}
+          <p>📝 Note: {{ order.special_requests }}</p>
+        {% endif %}
+
+        <h4>🍵 Drinks & Pastries:</h4>
+        <ul>
+  {% for item, qty in order["items"].items() %}
+    {% if qty > 0 %}
+      {% if order.status == "Paid" %}
+        <li>
+          {{ label_map[item] if item in label_map else item }}:
+          <ul>
+            {% for i in range(qty) %}
+             <li>
+    <label style="display: flex; align-items: center; gap: 8px;">
+      <input type="checkbox" name="prepared_{{ item }}_{{ i }}">
+      Drink {{ i + 1 }}
+    </label>
+  </li>
+            {% endfor %}
+          </ul>
+        </li>
+      {% else %}
+        <li>{{ label_map[item] if item in label_map else item }} × {{ qty }}</li>
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+</ul>
+
+        {% if order.drink_toppings %}
+          <h4>➕ Add-ons (Per Cup):</h4>
+          <ul>
+            {% for drink, toppings in order.drink_toppings.items() %}
+              {% if toppings %}
+                <li>{{ label_map[drink] if drink in label_map else drink }}:
+                  <ul>
+                    {% for t in toppings %}
+                      {% if t is iterable and t is not string %}
+                        {% for a in t %}
+                          <li>• {{ addon_map[a] if a in addon_map else a }}</li>
+                        {% endfor %}
+                      {% else %}
+                        <li>• {{ addon_map[t] if t in addon_map else t }}</li>
+                      {% endif %}
+                    {% endfor %}
+                  </ul>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% endif %}
+
+        <p><strong>💰 Total: ₱{{ order.total }}</strong></p>
+
+        <form method="post" action="/admin/update-status" class="admin-action-row">
+          <input type="hidden" name="index" value="{{ orders.index(order) }}">
+          <input type="hidden" name="password" value="{{ password }}">
+
+          <select name="status" class="admin-select">
+            <option value="Pending" {% if order.status == "Pending" %}selected{% endif %}>Pending</option>
+            <option value="Paid" {% if order.status == "Paid" %}selected{% endif %}>Paid</option>
+            <option value="Done" {% if order.status == "Done" %}selected{% endif %}>Done</option>
+          </select>
+
+          <button type="submit" name="action" value="update" class="admin-button update">Update</button>
+          <button type="submit" name="action" value="delete" class="admin-button delete">Delete</button>
+        </form>
+      </div>
+    {% endfor %}
+  {% endfor %}
+</div>
+</body>
+</html>
+
+
+

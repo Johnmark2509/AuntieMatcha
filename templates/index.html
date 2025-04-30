@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Auntie Matcha</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container">
+  <h1>✨ Auntie Matcha ✨</h1>
+  <img src="/static/new_drink_menu.png" alt="New Auntie Matcha Menu" class="menu-img-small">
+  <img src="/static/pastry_menu.png" alt="Kiecoo Whiskery Menu" class="menu-img-small">
+
+  <form method="post" action="/order">
+    <h2>🧍 Customer Details</h2>
+    <div class="item"><label for="customer_name">Full Name:</label><input type="text" id="customer_name" name="customer_name" required></div>
+    <div class="item"><label for="contact_number">Contact Number:</label><input type="tel" id="contact_number" name="contact_number" required></div>
+    <div class="item"><label for="address">Address:</label><input type="text" id="address" name="address" required></div>
+
+    <h2>🍵 Matcha</h2><div id="matcha-section"></div>
+    <h2>☕ Coffee</h2><div id="coffee-section"></div>
+    <h2>🧃 Refreshers</h2><div id="non-section"></div>
+
+    <h2>🍪 Pastries – by Kiecoo Whiskery</h2>
+    <div class="item pastry-inline"><label for="choco_cookie">Choco Chip Cookies (₱60):</label><input type="number" id="choco_cookie" name="choco_cookie" min="0" value="0"></div>
+    <div class="item pastry-inline"><label for="strawberry_cookie">Strawberry Cheesecake Cookies (₱60):</label><input type="number" id="strawberry_cookie" name="strawberry_cookie" min="0" value="0"></div>
+    <div class="item pastry-inline"><label for="no_bake_cheesecake">No-Bake Cheesecake (₱140):</label><input type="number" id="no_bake_cheesecake" name="no_bake_cheesecake" min="0" value="0" onchange="showCheesecakeToppings()"></div>
+    <div id="cheesecake_toppings" class="item"></div>
+
+    <h2>📦 Additional Order Information</h2>
+    <div class="item"><label for="pickup_date">Preferred Pickup Date:</label><input type="date" id="pickup_date" name="pickup_date" required></div>
+    <div class="item"><label for="pickup_time">Preferred Pickup Time:</label><input type="time" id="pickup_time" name="pickup_time" required></div>
+    <div class="item"><label for="special_requests">Any Special Requests?</label><input type="text" id="special_requests" name="special_requests" placeholder="Leave us a note..."></div>
+
+    <button type="submit">🍵 Submit Order</button>
+  </form>
+
+  <div class="total-box"><h2>Total: <span id="live-total">₱0</span></h2></div>
+
+<script>
+const drinks = {
+  matcha: {
+    matcha_classic: ["Classic Matcha Latte", 130],
+    matcha_strawberry: ["Strawberry Matcha Latte", 150],
+    hojicha_latte: ["Hojicha Latte", 110],
+    strawberry_hojicha: ["Strawberry Hojicha Latte", 130],
+    matcha_espresso: ["Matcha Espresso Latte", 150]
+  },
+  coffee: {
+    iced_americano: ["Iced Americano", 80],
+    iced_cafe_latte: ["Iced Cafe Latte", 95],
+    iced_spanish_latte: ["Iced Spanish Latte", 110]
+  },
+  non: {
+    iced_tablea: ["Iced Tablea", 100],
+    tablea_berry: ["Tablea Berry", 120],
+    strawberry_milk: ["Strawberry Milk", 100]
+  }
+};
+
+const sizePrices = { small: 0, medium: 30, to_go: 55 };
+
+const addonsByType = {
+  matcha: { strong_matcha: 50, vanilla_foam: 20 },
+  coffee: { extra_espresso: 50, vanilla_foam: 20, sub_oat_milk: 25 },
+  non: { vanilla_foam: 20, sub_oat_milk: 25 },
+  both: { strong_matcha: 50, extra_espresso: 50, vanilla_foam: 20, sub_oat_milk: 25 }
+};
+
+const addonLabels = {
+  strong_matcha: "Strong Matcha (+₱50)",
+  extra_espresso: "Extra Espresso (+₱50)",
+  vanilla_foam: "Vanilla Cream Foam (+₱20)",
+  sub_oat_milk: "Sub-Oat Milk (+₱25)",
+};
+
+function createDrinkSection(type, sectionId) {
+  const section = document.getElementById(sectionId);
+  for (const [id, [label, price]] of Object.entries(drinks[type])) {
+    const block = document.createElement("div");
+    block.className = "item";
+    block.innerHTML = `
+      <div class="drink-inline">
+        <label for="${id}">${label} (₱${price}):</label>
+        <input type="number" id="${id}" name="${id}" min="0" value="0" onchange="renderDrinkDetails('${id}', '${type}', ${price})">
+      </div>
+      <div id="${id}_details"></div>
+    `;
+    section.appendChild(block);
+  }
+}
+
+function renderDrinkDetails(drinkId, type, basePrice) {
+  const qty = parseInt(document.getElementById(drinkId).value) || 0;
+  const container = document.getElementById(`${drinkId}_details`);
+  container.innerHTML = "";
+
+  for (let i = 0; i < qty; i++) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "item";
+    wrapper.innerHTML = `
+      <label>Drink ${i + 1} Size:
+        <select name="${drinkId}_size_${i}" required onchange="renderSweetness('${drinkId}', '${type}', ${i}); calculateTotal();">
+          <option value="">Select Size</option>
+          <option value="small">Small (12oz)</option>
+          <option value="medium">Medium (16oz)(+₱30)</option>
+          <option value="to_go">To-Go Bottle (+₱55)</option>
+        </select>
+      </label>
+      <div id="${drinkId}_sweet_${i}"></div>
+    `;
+    container.appendChild(wrapper);
+  }
+
+  calculateTotal();
+}
+
+function renderSweetness(drinkId, type, i) {
+  const sweetDiv = document.getElementById(`${drinkId}_sweet_${i}`);
+  sweetDiv.innerHTML = `
+    <label>Sweetness:
+      <select name="${drinkId}_sweet_${i}" required onchange="renderAddons('${drinkId}', '${type}', ${i})">
+        <option value="">Select Sweetness</option>
+        <option value="0">0% No Sugar</option>
+        <option value="25">25% Less Sugar</option>
+        <option value="50">50% Regular</option>
+        <option value="75">75% More Sugar</option>
+        <option value="100">100% Super Sweet</option>
+      </select>
+    </label>
+    <div id="${drinkId}_addon_${i}"></div>
+  `;
+}
+
+function renderAddons(drinkId, type, i) {
+  const addonDiv = document.getElementById(`${drinkId}_addon_${i}`);
+  const addons = (drinkId === "matcha_espresso") ? addonsByType["both"] : addonsByType[type];
+  const listId = `${drinkId}_list_${i}`;
+
+  let html = `
+    <div class="addon-dropdown">
+      <div class="addon-toggle" onclick="toggleDropdown('${listId}')" id="${drinkId}_summary_${i}">Select Add-ons</div>
+      <div class="addon-list hidden" id="${listId}">`;
+
+  for (const [key, price] of Object.entries(addons)) {
+    html += `
+      <label>
+        <input type="checkbox" name="${drinkId}_addon_${i}" value="${key}" onchange="calculateTotal(); updateAddonLabel('${drinkId}', ${i})">
+        ${addonLabels[key]}
+      </label><br>`;
+  }
+
+  html += `</div></div>`;
+  addonDiv.innerHTML = html;
+  calculateTotal();
+}
+
+function toggleDropdown(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle("hidden");
+}
+
+document.addEventListener("click", function (e) {
+  if (!e.target.closest(".addon-dropdown")) {
+    document.querySelectorAll(".addon-list").forEach(el => el.classList.add("hidden"));
+  }
+});
+
+function showCheesecakeToppings() {
+  const qty = parseInt(document.getElementById("no_bake_cheesecake").value) || 0;
+  const container = document.getElementById("cheesecake_toppings");
+  container.innerHTML = "";
+
+  for (let i = 0; i < qty; i++) {
+    const select = document.createElement("select");
+    select.name = `cheesecake_topping_${i}`;
+    select.innerHTML = `
+      <option value="plain">Plain (No topping)</option>
+      <option value="matcha">Matcha</option>
+      <option value="strawberries">Strawberries</option>
+      <option value="chocolate">Chocolate</option>
+    `;
+    container.appendChild(select);
+  }
+
+  calculateTotal();
+}
+
+function calculateTotal() {
+  let total = 0;
+
+  for (const [type, drinksList] of Object.entries(drinks)) {
+    for (const [drinkId, [_, basePrice]] of Object.entries(drinksList)) {
+      const qty = parseInt(document.getElementById(drinkId)?.value || 0);
+      total += qty * basePrice;
+
+      for (let i = 0; i < qty; i++) {
+        const size = document.querySelector(`[name="${drinkId}_size_${i}"]`)?.value;
+        if (size) total += sizePrices[size] || 0;
+
+        const addons = document.querySelectorAll(`input[name="${drinkId}_addon_${i}"]:checked`);
+        addons.forEach(a => {
+          const drinkType = (drinkId === "matcha_espresso") ? "both" : type;
+	  total += addonsByType[drinkType][a.value] || 0;
+        });
+      }
+    }
+  }
+
+  total += (parseInt(document.getElementById("choco_cookie")?.value || 0) * 60);
+  total += (parseInt(document.getElementById("strawberry_cookie")?.value || 0) * 60);
+  total += (parseInt(document.getElementById("no_bake_cheesecake")?.value || 0) * 140);
+
+  document.getElementById("live-total").innerText = "₱" + total;
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  createDrinkSection("matcha", "matcha-section");
+  createDrinkSection("coffee", "coffee-section");
+  createDrinkSection("non", "non-section");
+
+  const today = new Date().toISOString().split("T")[0];
+  document.getElementById("pickup_date").setAttribute("min", today);
+
+  document.querySelectorAll('input[type="number"]').forEach(input => {
+    input.addEventListener("input", calculateTotal);
+  });
+});
+
+function updateAddonLabel(drinkId, i) {
+  const checkboxes = document.querySelectorAll(`input[name="${drinkId}_addon_${i}"]:checked`);
+  const label = document.getElementById(`${drinkId}_summary_${i}`);
+
+  if (!label) return;
+
+  if (checkboxes.length === 0) {
+    label.textContent = "Select Add-ons";
+  } else {
+    const selected = Array.from(checkboxes).map(cb => addonLabels[cb.value]);
+    label.textContent = "✔ Selected: " + selected.join(", ");
+  }
+}
+
+</script>
+</body>
+</html>

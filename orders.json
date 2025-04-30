@@ -1,0 +1,71 @@
+[
+  {
+    "timestamp": "2025-04-30T20:34:59.357088",
+    "customer": {
+      "name": "John Mark Grecia",
+      "contact": "09676077396",
+      "address": "Blk. 69 Lot 16 Nevada St., Washington Place, Sampaloc II"
+    },
+    "pickup_date": "2025-05-08",
+    "pickup_time": "13:40",
+    "pickup_datetime": "2025-05-08T13:40",
+    "special_requests": "",
+    "items": {
+      "matcha_classic": 1
+    },
+    "drink_toppings": {
+      "matcha_classic": [
+        []
+      ]
+    },
+    "total": 130,
+    "status": "Paid"
+  },
+  {
+    "timestamp": "2025-04-30T22:07:58.548430",
+    "customer": {
+      "name": "John Mark Grecia",
+      "contact": "09676077396",
+      "address": "Blk. 69 Lot 16 Nevada St., Washington Place, Sampaloc II"
+    },
+    "pickup_date": "2025-05-01",
+    "pickup_time": "22:10",
+    "pickup_datetime": "2025-05-01T22:10",
+    "special_requests": "",
+    "items": {
+      "matcha_classic": 1
+    },
+    "drink_toppings": {
+      "matcha_classic": [
+        [
+          "vanilla_foam"
+        ]
+      ]
+    },
+    "total": 150,
+    "status": "Paid"
+  },
+  {
+    "timestamp": "2025-04-30T22:15:37.373202",
+    "customer": {
+      "name": "John Mark Grecia",
+      "contact": "09676077396",
+      "address": "Blk. 69 Lot 16 Nevada St., Washington Place, Sampaloc II"
+    },
+    "pickup_date": "2025-05-08",
+    "pickup_time": "22:18",
+    "pickup_datetime": "2025-05-08T22:18",
+    "special_requests": "",
+    "items": {
+      "matcha_strawberry": 2
+    },
+    "drink_toppings": {
+      "matcha_strawberry": [
+        [],
+        []
+      ]
+    },
+    "total": 330,
+    "status": "Paid"
+  }
+]
