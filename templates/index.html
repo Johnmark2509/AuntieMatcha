@@ -14,7 +14,6 @@
   <img src="/static/pastry_menu.png" alt="Kiecoo Whiskery Menu" class="menu-img-small">
 
   <form id="order-form" method="post" action="/order">
-  <form method="post" action="/order">
     <h2>🧍 Customer Details</h2>
     <div class="item"><label for="customer_name">Full Name:</label><input type="text" id="customer_name" name="customer_name" required></div>
     <div class="item"><label for="contact_number">Contact Number:</label><input type="tel" id="contact_number" name="contact_number" required></div>
@@ -243,20 +242,33 @@ function updateAddonLabel(drinkId, i) {
     label.textContent = "✔ Selected: " + selected.join(", ");
   }
 }
+
 document.getElementById("order-form").addEventListener("submit", function (e) {
-  const allSelects = document.querySelectorAll("select");
-  for (let select of allSelects) {
-    if (
-      select.required &&
-      (select.value === "" || select.value === null || select.value === undefined)
-    ) {
-      alert("Oops! Please select size and sweetness for all drinks you ordered.");
-      select.focus();
-      e.preventDefault(); // cancel the form submit
-      return;
+  let invalidFields = [];
+
+  // Loop through all drinks
+  for (const [type, drinksList] of Object.entries(drinks)) {
+    for (const drinkId of Object.keys(drinksList)) {
+      const qty = parseInt(document.getElementById(drinkId)?.value || 0);
+
+      for (let i = 0; i < qty; i++) {
+        const size = document.querySelector(`[name="${drinkId}_size_${i}"]`);
+        const sweet = document.querySelector(`[name="${drinkId}_sweet_${i}"]`);
+
+        if (!size || size.value === "") invalidFields.push(size);
+        if (!sweet || sweet.value === "") invalidFields.push(sweet);
+      }
     }
   }
+
+  if (invalidFields.length > 0) {
+    e.preventDefault();
+    alert("Please complete all drink options: Size and Sweetness.");
+    invalidFields[0]?.scrollIntoView({ behavior: "smooth", block: "center" });
+    invalidFields[0]?.focus();
+  }
 });
+
 </script>
 </body>
 </html>
