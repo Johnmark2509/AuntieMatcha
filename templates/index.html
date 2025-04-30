@@ -102,7 +102,7 @@ function renderDrinkDetails(drinkId, type, basePrice) {
     wrapper.className = "item";
     wrapper.innerHTML = `
       <label>Drink ${i + 1} Size:
-        <select name="${drinkId}_size_${i}" required onchange="renderSweetness('${drinkId}', '${type}', ${i}); calculateTotal();">
+        <select name="${drinkId}_size_${i}" onchange="renderSweetness('${drinkId}', '${type}', ${i}); calculateTotal();">
           <option value="">Select Size</option>
           <option value="small">Small (12oz)</option>
           <option value="medium">Medium (16oz)(+₱30)</option>
@@ -121,7 +121,7 @@ function renderSweetness(drinkId, type, i) {
   const sweetDiv = document.getElementById(`${drinkId}_sweet_${i}`);
   sweetDiv.innerHTML = `
     <label>Sweetness:
-      <select name="${drinkId}_sweet_${i}" required onchange="renderAddons('${drinkId}', '${type}', ${i})">
+      <select name="${drinkId}_sweet_${i}" onchange="renderAddons('${drinkId}', '${type}', ${i})">
         <option value="">Select Sweetness</option>
         <option value="0">0% No Sugar</option>
         <option value="25">25% Less Sugar</option>
