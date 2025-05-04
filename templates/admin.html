@@ -91,19 +91,20 @@
               {% if toppings %}
                 <li>{{ label_map[drink] if drink in label_map else drink }}:
                   <ul>
-                    {% for t in toppings %}
-                      {% if t is iterable and t is not string %}
-                        {% for a in t %}
-                          <li>• {{ addon_map[a] if a in addon_map else a }}</li>
-                        {% endfor %}
-                      {% else %}
-                        <li>• {{ addon_map[t] if t in addon_map else t }}</li>
-                      {% endif %}
-                    {% endfor %}
-                  </ul>
-                </li>
-              {% endif %}
-            {% endfor %}
+                    {% for drink_info in toppings %}
+  <li>
+    Size: {{ drink_info.size|capitalize }}, 
+    Sweetness: {{ drink_info.sweetness }}%
+    {% if drink_info.addons %}
+      <ul>
+        {% for a in drink_info.addons %}
+          <li>• {{ addon_map[a] if a in addon_map else a }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </li>
+{% endfor %}
+
           </ul>
         {% endif %}
 

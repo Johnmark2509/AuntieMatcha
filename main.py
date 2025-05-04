@@ -78,7 +78,11 @@ async def submit_order(request: Request):
                 for addon in addons:
                     total += add_on_prices.get(addon, 0)
 
-                drink_toppings[drink_id].append(addons)
+                drink_toppings[drink_id].append({
+                    "size": size,
+                    "sweetness": sweetness,
+                    "addons": addons
+                    })
 
     # Pastries
     for pastry in ["choco_cookie", "strawberry_cookie"]:
