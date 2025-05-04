@@ -92,9 +92,15 @@
                 <li>{{ label_map[drink] if drink in label_map else drink }}:
                   <ul>
                     {% for drink_info in toppings %}
-  <li>
-    Size: {{ drink_info.size|capitalize }}, 
-    Sweetness: {{ drink_info.sweetness }}%
+  {% if drink_info.size is defined %}
+    <li>
+      Size: {{ drink_info.size|capitalize }},
+      Sweetness: {{ drink_info.sweetness }}%
+  {% else %}
+    <li>
+      • {{ drink_info|replace("_", " ")|title }}
+  {% endif %}
+
     {% if drink_info.addons %}
       <ul>
         {% for a in drink_info.addons %}
