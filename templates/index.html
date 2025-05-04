@@ -6,6 +6,7 @@
   <title>Auntie Matcha</title>
   <link rel="stylesheet" href="/static/style.css">
   <link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 <div class="container">
@@ -216,19 +217,6 @@ function calculateTotal() {
   document.getElementById("live-total").innerText = "₱" + total;
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-  createDrinkSection("matcha", "matcha-section");
-  createDrinkSection("coffee", "coffee-section");
-  createDrinkSection("non", "non-section");
-
-  const today = new Date().toISOString().split("T")[0];
-  document.getElementById("pickup_date").setAttribute("min", today);
-
-  document.querySelectorAll('input[type="number"]').forEach(input => {
-    input.addEventListener("input", calculateTotal);
-  });
-});
-
 function updateAddonLabel(drinkId, i) {
   const checkboxes = document.querySelectorAll(`input[name="${drinkId}_addon_${i}"]:checked`);
   const label = document.getElementById(`${drinkId}_summary_${i}`);
@@ -246,7 +234,6 @@ function updateAddonLabel(drinkId, i) {
 document.getElementById("order-form").addEventListener("submit", function (e) {
   let invalidFields = [];
 
-  // Loop through all drinks
   for (const [type, drinksList] of Object.entries(drinks)) {
     for (const drinkId of Object.keys(drinksList)) {
       const qty = parseInt(document.getElementById(drinkId)?.value || 0);
@@ -266,6 +253,32 @@ document.getElementById("order-form").addEventListener("submit", function (e) {
     alert("Please complete all drink options: Size and Sweetness.");
     invalidFields[0]?.scrollIntoView({ behavior: "smooth", block: "center" });
     invalidFields[0]?.focus();
+  } else {
+    sessionStorage.setItem("orderPlaced", "true");
+  }
+});
+
+window.addEventListener("DOMContentLoaded", () => {
+  createDrinkSection("matcha", "matcha-section");
+  createDrinkSection("coffee", "coffee-section");
+  createDrinkSection("non", "non-section");
+
+  const today = new Date().toISOString().split("T")[0];
+  document.getElementById("pickup_date").setAttribute("min", today);
+
+  document.querySelectorAll('input[type="number"]').forEach(input => {
+    input.addEventListener("input", calculateTotal);
+  });
+
+  // 🎉 SweetAlert only if order was submitted
+  if (sessionStorage.getItem("orderPlaced") === "true") {
+    Swal.fire({
+      icon: 'success',
+      title: 'Order Submitted!',
+      text: 'Thank you! Your order has been received 💚',
+      confirmButtonColor: '#7CB342'
+    });
+    sessionStorage.removeItem("orderPlaced");
   }
 });
 
