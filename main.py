@@ -21,6 +21,10 @@ ADMIN_PASSWORD = "matchalover"
 if not os.path.exists(ORDER_LOG):
     with open(ORDER_LOG, "w") as f:
         json.dump([], f)
+        
+@app.get("/ping")
+def ping():
+    return {"status": "ok"}
 
 @app.get("/", response_class=HTMLResponse)
 def get_menu(request: Request):

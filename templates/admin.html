@@ -57,7 +57,7 @@
 
         <h4>🍵 Drinks & Pastries:</h4>
         <ul>
-          {% for item, qty in order.items.items() %}
+          {% for item, qty in order["items"].items() %}
             {% if qty > 0 %}
               {% if order.status == "Paid" %}
                 <li>
