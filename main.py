@@ -5,6 +5,30 @@ from fastapi.templating import Jinja2Templates
 from datetime import datetime
 import json
 import os
+import smtplib
+from email.mime.text import MIMEText
+from email.message import EmailMessage
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Load email credentials from .env or environment
+EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+
+print("EMAIL_ADDRESS:", EMAIL_ADDRESS)
+print("EMAIL_PASSWORD:", EMAIL_PASSWORD)
+
+def send_order_notification(subject: str, body: str):
+    msg = MIMEText(body)
+    msg["Subject"] = subject
+    msg["From"] = EMAIL_ADDRESS
+    msg["To"] = EMAIL_ADDRESS  # send to yourself
+
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+        server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+        server.send_message(msg)
+
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -128,6 +152,33 @@ async def submit_order(request: Request):
 
     with open(ORDER_LOG, "w", encoding="utf-8") as f:
         json.dump(orders, f, indent=2)
+        
+
+    subject = "📦 New Auntie Matcha Order Received!"
+    body = f"""
+    New order received from {customer['name']}!
+    
+    Contact: {customer['contact']}
+    Address: {customer['address']}
+    Pickup: {pickup_date} at {pickup_time}
+    Total: ₱{total}
+    
+    Special Requests: {special_requests or 'None'}
+    Items: {json.dumps(items, indent=2)}
+    """
+    
+    msg = EmailMessage()
+    msg['From'] = EMAIL_ADDRESS
+    msg['To'] = EMAIL_ADDRESS
+    msg['Subject'] = subject
+    msg.set_content(body)
+
+    try:
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+            smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+            smtp.send_message(msg)
+    except Exception as e:
+        print("Failed to send email:", e)
 
     return RedirectResponse("/", status_code=303)
 
