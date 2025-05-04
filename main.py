@@ -8,9 +8,7 @@ import os
 import smtplib
 from email.mime.text import MIMEText
 from email.message import EmailMessage
-from dotenv import load_dotenv
 
-load_dotenv()
 
 # Load email credentials from .env or environment
 EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
