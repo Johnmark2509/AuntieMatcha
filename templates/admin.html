@@ -31,11 +31,7 @@
     "strong_matcha": "Strong Matcha",
     "extra_espresso": "Extra Espresso",
     "vanilla_foam": "Vanilla Cream Foam",
-    "both": "Strong Matcha + Extra Espresso",
-    "matcha_espresso": "Strong Matcha + Espresso",
-    "matcha_foam": "Strong Matcha + Vanilla Foam",
-    "espresso_foam": "Espresso + Vanilla Foam",
-    "all": "All Add-ons"
+    "sub_oat_milk": "Sub-Oat Milk"
   } %}
 
   {% set pending = orders | selectattr("status", "equalto", "Pending") | sort(attribute="timestamp") %}
@@ -61,56 +57,57 @@
 
         <h4>🍵 Drinks & Pastries:</h4>
         <ul>
-  {% for item, qty in order["items"].items() %}
-    {% if qty > 0 %}
-      {% if order.status == "Paid" %}
-        <li>
-          {{ label_map[item] if item in label_map else item }}:
-          <ul>
-            {% for i in range(qty) %}
-             <li>
-    <label style="display: flex; align-items: center; gap: 8px;">
-      <input type="checkbox" name="prepared_{{ item }}_{{ i }}">
-      Drink {{ i + 1 }}
-    </label>
-  </li>
-            {% endfor %}
-          </ul>
-        </li>
-      {% else %}
-        <li>{{ label_map[item] if item in label_map else item }} × {{ qty }}</li>
-      {% endif %}
-    {% endif %}
-  {% endfor %}
-</ul>
+          {% for item, qty in order.items.items() %}
+            {% if qty > 0 %}
+              {% if order.status == "Paid" %}
+                <li>
+                  {{ label_map[item] if item in label_map else item }}:
+                  <ul>
+                    {% for i in range(qty) %}
+                      <li>
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                          <input type="checkbox" name="prepared_{{ item }}_{{ i }}">
+                          Drink {{ i + 1 }}
+                        </label>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </li>
+              {% else %}
+                <li>{{ label_map[item] if item in label_map else item }} × {{ qty }}</li>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        </ul>
 
         {% if order.drink_toppings %}
           <h4>➕ Add-ons (Per Cup):</h4>
           <ul>
             {% for drink, toppings in order.drink_toppings.items() %}
               {% if toppings %}
-                <li>{{ label_map[drink] if drink in label_map else drink }}:
+                <li><strong>{{ label_map[drink] if drink in label_map else drink }}:</strong>
                   <ul>
                     {% for drink_info in toppings %}
-  {% if drink_info.size is defined %}
-    <li>
-      Size: {{ drink_info.size|capitalize }},
-      Sweetness: {{ drink_info.sweetness }}%
-  {% else %}
-    <li>
-      • {{ drink_info|replace("_", " ")|title }}
-  {% endif %}
-
-    {% if drink_info.addons %}
-      <ul>
-        {% for a in drink_info.addons %}
-          <li>• {{ addon_map[a] if a in addon_map else a }}</li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-  </li>
-{% endfor %}
-
+                      {% if drink_info.size is defined %}
+                        <li>
+                          Size: {{ drink_info.size|capitalize }},
+                          Sweetness: {{ drink_info.sweetness }}%
+                          {% if drink_info.addons %}
+                            <ul>
+                              {% for a in drink_info.addons %}
+                                <li>• {{ addon_map[a] if a in addon_map else a }}</li>
+                              {% endfor %}
+                            </ul>
+                          {% endif %}
+                        </li>
+                      {% else %}
+                        <li>• {{ drink_info|replace("_", " ")|title }}</li>
+                      {% endif %}
+                    {% endfor %}
+                  </ul>
+                </li>
+              {% endif %}
+            {% endfor %}
           </ul>
         {% endif %}
 
@@ -135,6 +132,3 @@
 </div>
 </body>
 </html>
-
-
-
