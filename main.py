@@ -228,10 +228,13 @@ async def update_or_delete(
     with open(ORDER_LOG, "r+", encoding="utf-8") as f:
         orders = json.load(f)
 
-        if action == "update":
-            orders[index]["status"] = status
-        elif action == "delete" and 0 <= index < len(orders):
-            del orders[index]
+        if 0 <= index < len(orders):
+            if action == "update":
+                orders[index]["status"] = status
+            elif action == "delete":
+                del orders[index]
+        else:
+            print(f"⚠️ Skipping invalid index: {index}. Current orders length: {len(orders)}")
 
         fcntl.flock(f, fcntl.LOCK_EX)
         f.seek(0)
