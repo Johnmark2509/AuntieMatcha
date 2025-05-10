@@ -42,7 +42,7 @@ def git_commit_and_push():
         subprocess.run(["git", "config", "--global", "user.name", os.getenv("GIT_USERNAME")], check=True)
         subprocess.run(["git", "add", "orders.json"], check=True)
         subprocess.run(["git", "commit", "-m", "Update orders.json"], check=True)
-        subprocess.run(["git", "push", git_repo, "HEAD:main"], check=True)
+        subprocess.run(["git", "push", git_repo, "HEAD:main", "--force"], check=True)
         print("✅ orders.json pushed to GitHub.")
     except subprocess.CalledProcessError as e:
         print("❌ Git push failed:", e)
