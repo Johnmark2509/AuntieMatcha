@@ -6,11 +6,16 @@ from datetime import datetime
 import json
 import os
 import smtplib
+import subprocess
+import fcntl
 from email.mime.text import MIMEText
 from email.message import EmailMessage
+from dotenv import load_dotenv
 
+# Load environment variables from .env
+load_dotenv()
 
-# Load email credentials from .env or environment
+# Load email credentials
 EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 
@@ -21,12 +26,26 @@ def send_order_notification(subject: str, body: str):
     msg = MIMEText(body)
     msg["Subject"] = subject
     msg["From"] = EMAIL_ADDRESS
-    msg["To"] = EMAIL_ADDRESS  # send to yourself
+    msg["To"] = EMAIL_ADDRESS
 
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
         server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
         server.send_message(msg)
 
+def git_commit_and_push():
+    git_repo = os.getenv("GIT_REPO")
+    if not git_repo:
+        print("GIT_REPO not set. Skipping git push.")
+        return
+    try:
+        subprocess.run(["git", "config", "--global", "user.email", os.getenv("GIT_EMAIL")], check=True)
+        subprocess.run(["git", "config", "--global", "user.name", os.getenv("GIT_USERNAME")], check=True)
+        subprocess.run(["git", "add", "orders.json"], check=True)
+        subprocess.run(["git", "commit", "-m", "Update orders.json"], check=True)
+        subprocess.run(["git", "push", git_repo], check=True)
+        print("✅ orders.json pushed to GitHub.")
+    except subprocess.CalledProcessError as e:
+        print("❌ Git push failed:", e)
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -43,7 +62,7 @@ ADMIN_PASSWORD = "matchalover"
 if not os.path.exists(ORDER_LOG):
     with open(ORDER_LOG, "w") as f:
         json.dump([], f)
-        
+
 @app.get("/ping")
 def ping():
     return {"status": "ok"}
@@ -78,9 +97,8 @@ async def submit_order(request: Request):
     }
 
     size_prices = { "small": 0, "medium": 30, "to_go": 55 }
-
     add_on_prices = {
-        "strong_matcha": 50, "extra_espresso": 50, "vanilla_foam": 20,"sub_oat_milk": 25,
+        "strong_matcha": 50, "extra_espresso": 50, "vanilla_foam": 20, "sub_oat_milk": 25,
     }
 
     drink_ids = [
@@ -108,16 +126,14 @@ async def submit_order(request: Request):
                     "size": size,
                     "sweetness": sweetness,
                     "addons": addons
-                    })
+                })
 
-    # Pastries
     for pastry in ["choco_cookie", "strawberry_cookie"]:
         qty = int(form.get(pastry, 0))
         if qty > 0:
             items[pastry] = qty
             total += qty * base_prices[pastry]
 
-    # Cheesecake
     cheesecake_qty = int(form.get("no_bake_cheesecake", 0))
     if cheesecake_qty > 0:
         items["no_bake_cheesecake"] = cheesecake_qty
@@ -148,23 +164,27 @@ async def submit_order(request: Request):
 
     orders.append(new_order)
 
-    with open(ORDER_LOG, "w", encoding="utf-8") as f:
+    with open(ORDER_LOG, "r+", encoding="utf-8") as f:
+        fcntl.flock(f, fcntl.LOCK_EX)
+        f.seek(0)
+        f.truncate()
         json.dump(orders, f, indent=2)
-        
+        fcntl.flock(f, fcntl.LOCK_UN)
+    git_commit_and_push()
 
     subject = "📦 New Auntie Matcha Order Received!"
     body = f"""
     New order received from {customer['name']}!
-    
+
     Contact: {customer['contact']}
     Address: {customer['address']}
     Pickup: {pickup_date} at {pickup_time}
     Total: ₱{total}
-    
+
     Special Requests: {special_requests or 'None'}
     Items: {json.dumps(items, indent=2)}
     """
-    
+
     msg = EmailMessage()
     msg['From'] = EMAIL_ADDRESS
     msg['To'] = EMAIL_ADDRESS
@@ -213,9 +233,11 @@ async def update_or_delete(
         elif action == "delete" and 0 <= index < len(orders):
             del orders[index]
 
+        fcntl.flock(f, fcntl.LOCK_EX)
         f.seek(0)
         f.truncate()
         json.dump(orders, f, indent=2)
+        fcntl.flock(f, fcntl.LOCK_UN)
+    git_commit_and_push()
 
     return RedirectResponse(url=f"/admin?password={password}", status_code=303)
-
