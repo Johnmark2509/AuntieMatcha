@@ -1,1 +1,28 @@
-[]
+[
+  {
+    "timestamp": "2025-05-11T04:40:35.314045",
+    "customer": {
+      "name": "Kailyn Punzalan",
+      "contact": "09952467282",
+      "address": "Blk 21 Lot 12 Brgy St. Peter 2 Dasmari\u00f1as Cavite (Area G) "
+    },
+    "pickup_date": "2025-05-11",
+    "pickup_time": "13:00",
+    "pickup_datetime": "2025-05-11T13:00",
+    "special_requests": "No whipped cream plssss",
+    "items": {
+      "matcha_espresso": 1
+    },
+    "drink_toppings": {
+      "matcha_espresso": [
+        {
+          "size": "medium",
+          "sweetness": "25",
+          "addons": []
+        }
+      ]
+    },
+    "total": 180,
+    "status": "Pending"
+  }
+]
