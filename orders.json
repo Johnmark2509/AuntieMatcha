@@ -24,5 +24,55 @@
     },
     "total": 180,
     "status": "Done"
+  },
+  {
+    "timestamp": "2025-05-15T01:51:10.334712",
+    "customer": {
+      "name": "Sarah Mae Zaragoza",
+      "contact": "09473226843",
+      "address": "DlSmHSI wang bldg "
+    },
+    "pickup_date": "2025-05-15",
+    "pickup_time": "11:00",
+    "pickup_datetime": "2025-05-15T11:00",
+    "special_requests": "Thank you",
+    "items": {
+      "hojicha_latte": 2,
+      "iced_spanish_latte": 3,
+      "strawberry_cookie": 1
+    },
+    "drink_toppings": {
+      "hojicha_latte": [
+        {
+          "size": "medium",
+          "sweetness": "50",
+          "addons": []
+        },
+        {
+          "size": "medium",
+          "sweetness": "50",
+          "addons": []
+        }
+      ],
+      "iced_spanish_latte": [
+        {
+          "size": "medium",
+          "sweetness": "50",
+          "addons": []
+        },
+        {
+          "size": "medium",
+          "sweetness": "50",
+          "addons": []
+        },
+        {
+          "size": "medium",
+          "sweetness": "50",
+          "addons": []
+        }
+      ]
+    },
+    "total": 760,
+    "status": "Pending"
   }
 ]
