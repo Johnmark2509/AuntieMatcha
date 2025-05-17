@@ -114,5 +114,31 @@
     },
     "total": 180,
     "status": "Pending"
+  },
+  {
+    "timestamp": "2025-05-17T10:24:57.222748",
+    "customer": {
+      "name": "Willean Erce",
+      "contact": "09951892985",
+      "address": "Chubby Streat on Google Maps"
+    },
+    "pickup_date": "2025-05-17",
+    "pickup_time": "18:30",
+    "pickup_datetime": "2025-05-17T18:30",
+    "special_requests": "",
+    "items": {
+      "matcha_classic": 1
+    },
+    "drink_toppings": {
+      "matcha_classic": [
+        {
+          "size": "medium",
+          "sweetness": "50",
+          "addons": []
+        }
+      ]
+    },
+    "total": 160,
+    "status": "Pending"
   }
 ]
