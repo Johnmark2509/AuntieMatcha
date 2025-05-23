@@ -172,5 +172,39 @@
     },
     "total": 270,
     "status": "Pending"
+  },
+  {
+    "timestamp": "2025-05-23T12:55:49.728470",
+    "customer": {
+      "name": "Iris Buenconsejo",
+      "contact": "0",
+      "address": "House"
+    },
+    "pickup_date": "2025-05-23",
+    "pickup_time": "21:00",
+    "pickup_datetime": "2025-05-23T21:00",
+    "special_requests": "Hot both drinks",
+    "items": {
+      "matcha_classic": 1,
+      "iced_tablea": 1
+    },
+    "drink_toppings": {
+      "matcha_classic": [
+        {
+          "size": "medium",
+          "sweetness": "75",
+          "addons": []
+        }
+      ],
+      "iced_tablea": [
+        {
+          "size": "medium",
+          "sweetness": "50",
+          "addons": []
+        }
+      ]
+    },
+    "total": 290,
+    "status": "Pending"
   }
 ]
