@@ -206,5 +206,50 @@
     },
     "total": 290,
     "status": "Done"
+  },
+  {
+    "timestamp": "2025-05-25T11:37:35.579721",
+    "customer": {
+      "name": "kyle gobis updated",
+      "contact": "0",
+      "address": "haus"
+    },
+    "pickup_date": "2025-05-25",
+    "pickup_time": "19:37",
+    "pickup_datetime": "2025-05-25T19:37",
+    "special_requests": "updated order",
+    "items": {
+      "hojicha_latte": 1,
+      "tablea_berry": 2,
+      "no_bake_cheesecake": 1
+    },
+    "drink_toppings": {
+      "hojicha_latte": [
+        {
+          "size": "medium",
+          "sweetness": "50",
+          "addons": [
+            "vanilla_foam"
+          ]
+        }
+      ],
+      "tablea_berry": [
+        {
+          "size": "medium",
+          "sweetness": "50",
+          "addons": []
+        },
+        {
+          "size": "to_go",
+          "sweetness": "50",
+          "addons": []
+        }
+      ],
+      "no_bake_cheesecake": [
+        "plain"
+      ]
+    },
+    "total": 625,
+    "status": "Pending"
   }
 ]
