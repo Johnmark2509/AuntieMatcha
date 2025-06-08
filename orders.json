@@ -287,5 +287,41 @@
     },
     "total": 320,
     "status": "Pending"
+  },
+  {
+    "timestamp": "2025-06-08T09:22:57.192123",
+    "customer": {
+      "name": "Mariah Ghed Lumbera",
+      "contact": "09053350039",
+      "address": "Pick up at diamond village"
+    },
+    "pickup_date": "2025-06-08",
+    "pickup_time": "18:30",
+    "pickup_datetime": "2025-06-08T18:30",
+    "special_requests": "",
+    "items": {
+      "matcha_classic": 1,
+      "hojicha_latte": 1
+    },
+    "drink_toppings": {
+      "matcha_classic": [
+        {
+          "size": "medium",
+          "sweetness": "75",
+          "addons": [
+            "strong_matcha"
+          ]
+        }
+      ],
+      "hojicha_latte": [
+        {
+          "size": "small",
+          "sweetness": "75",
+          "addons": []
+        }
+      ]
+    },
+    "total": 320,
+    "status": "Pending"
   }
 ]
