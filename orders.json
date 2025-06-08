@@ -142,38 +142,6 @@
     "status": "Done"
   },
   {
-    "timestamp": "2025-05-23T11:12:34.403015",
-    "customer": {
-      "name": "Kyel",
-      "contact": "09171741768",
-      "address": "Ur house"
-    },
-    "pickup_date": "2025-05-24",
-    "pickup_time": "09:30",
-    "pickup_datetime": "2025-05-24T09:30",
-    "special_requests": "",
-    "items": {
-      "hojicha_latte": 1,
-      "no_bake_cheesecake": 1
-    },
-    "drink_toppings": {
-      "hojicha_latte": [
-        {
-          "size": "small",
-          "sweetness": "50",
-          "addons": [
-            "vanilla_foam"
-          ]
-        }
-      ],
-      "no_bake_cheesecake": [
-        "plain"
-      ]
-    },
-    "total": 270,
-    "status": "Pending"
-  },
-  {
     "timestamp": "2025-05-23T12:55:49.728470",
     "customer": {
       "name": "Iris Buenconsejo",
