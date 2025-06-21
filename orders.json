@@ -255,5 +255,33 @@
     },
     "total": 320,
     "status": "Done"
+  },
+  {
+    "timestamp": "2025-06-21T01:36:16.808134",
+    "customer": {
+      "name": "Alexis Marqueses",
+      "contact": "09989393993",
+      "address": "546, Sunflower Street, Queen's Row West"
+    },
+    "pickup_date": "2025-06-21",
+    "pickup_time": "16:00",
+    "pickup_datetime": "2025-06-21T16:00",
+    "special_requests": "",
+    "items": {
+      "matcha_classic": 1,
+      "choco_cookie": 1,
+      "strawberry_cookie": 1
+    },
+    "drink_toppings": {
+      "matcha_classic": [
+        {
+          "size": "medium",
+          "sweetness": "50",
+          "addons": []
+        }
+      ]
+    },
+    "total": 280,
+    "status": "Pending"
   }
 ]
