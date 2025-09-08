@@ -317,5 +317,31 @@
     },
     "total": 390,
     "status": "Pending"
+  },
+  {
+    "timestamp": "2025-09-08T02:44:28.193289",
+    "customer": {
+      "name": "Venice Bolinao",
+      "contact": "09958127275",
+      "address": "Emilio Aguinaldo College Cavite"
+    },
+    "pickup_date": "2025-09-08",
+    "pickup_time": "12:40",
+    "pickup_datetime": "2025-09-08T12:40",
+    "special_requests": "",
+    "items": {
+      "matcha_classic": 1
+    },
+    "drink_toppings": {
+      "matcha_classic": [
+        {
+          "size": "medium",
+          "sweetness": "25",
+          "addons": []
+        }
+      ]
+    },
+    "total": 160,
+    "status": "Pending"
   }
 ]
